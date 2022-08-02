@@ -1,9 +1,12 @@
 import React from 'react';
 import { useState, useEffect } from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 import Header from './components/Header'
 import Tasks from './components/Tasks'
 import AddTask from './components/AddTask'
+import Footer from './components/Footer'
+import About from './components/About'
 
 const App = () => {
   const [showAddTask, setShowAddTask] = useState(false)
@@ -25,7 +28,7 @@ const App = () => {
     return data;
   }
 
-    //fetch tasks
+  //fetch tasks
   const fetchTask = async (id) => {
     const res = await fetch(`http://localhost:5000/tasks/${id}`)
     const data = await res.json();
@@ -77,6 +80,7 @@ const App = () => {
     const data = await res.json()
 
     setTasks([...tasks, data])
+
     //setTasks(await fetchTasks())
 
     // const id = Math.floor(Math.random() * 10000) + 1
@@ -90,17 +94,31 @@ const App = () => {
   }
 
   return (
-    <div className="container">
-      <Header onAdd={()=> toggleAddForm} showAdd={showAddTask}/>
-      { showAddTask && <AddTask onAdd={addTask}/> }
-      { tasks.length > 0 
-        ? <Tasks 
-          tasks={tasks}
-          onDelete={deleteTask}
-          onToggle={toggleReminder} />
-        : 'No Tasks To Show'
-      }
-    </div>
+    <BrowserRouter>
+      <div className="container">
+        <Header onAdd={()=> toggleAddForm} showAdd={showAddTask}/>
+        <Routes>
+          <Route path='/' exact render={(props) => (
+            <>
+              { showAddTask && <AddTask onAdd={addTask}/> }
+              { tasks.length > 0 
+              ? <Tasks 
+                tasks={tasks}
+                onDelete={deleteTask}
+                onToggle={toggleReminder} />
+              : 'No Tasks To Show'
+              }
+            </>
+          )}
+          />
+          <Route 
+            path='/about' 
+            component={About}
+          />
+        </Routes>
+        <Footer />
+      </div>
+    </BrowserRouter>
   )
 }
 
